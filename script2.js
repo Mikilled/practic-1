@@ -1,5 +1,7 @@
+
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
 const input = document.querySelector('.input-word');
 let word = '';
 let arr1 = [];
@@ -13,18 +15,18 @@ $(document).ready(function () {
             if (event.keyCode === 13) { // 13 - код клавиши Enter
                 const input = document.querySelector('.gamer-1-input');
                 check_word(input.value).then((data) => {
-                    if (data === undefined){        /*Добавить модальное окно о неправильном слове*/
+                    if (data === undefined){
                         console.log('нет слолва');
                         word_not_exist(input);
                     }else {
                         console.log(data);
                         if(word_in_word(word,data)) {
-                            if(arr1.includes(data))
+                            if(arr1.includes(data))//
                             {
                                 word_not_exist(input);
                             } else {
                                 arr1.push(data);
-                                var listItem = $("<li>", {class: "list-group-item", text: data});
+                                let listItem = $("<li>", {class: "list-group-item", text: data});
                                 // Добавляем новый элемент в конец списка
                                 $(".list-group-1").append(listItem);
                                 input.value = "";
@@ -40,7 +42,7 @@ $(document).ready(function () {
             if (event.keyCode === 13) { // 13 - код клавиши Enter
                 const input = document.querySelector('.gamer-2-input');
                 check_word(input.value).then((data) => {
-                    if (data === undefined){        /*Добавить модальное окно о неправильном слове*/
+                    if (data === undefined){
                         console.log('нет слолва');
                         word_not_exist(input);
                     }else {
@@ -51,7 +53,7 @@ $(document).ready(function () {
                                 word_not_exist(input);
                             } else {
                                 arr2.push(data);
-                                var listItem = $("<li>", {class: "list-group-item", text: data});
+                                let listItem = $("<li>", {class: "list-group-item", text: data});
                                 // Добавляем новый элемент в конец списка
                                 $(".list-group-2").append(listItem);
                                 input.value = "";
@@ -107,8 +109,13 @@ $(document).ready(function () {
            window.location.reload();
         });
 
+        if (input.value.length < 5){
+            alert("Слово должно быть длиннее 5 букв");
+            return;
+        }
+
         check_word(input.value).then((data) => {
-            if (data === undefined){        /*Добавить модальное окно о неправильном слове*/
+            if (data === undefined){
                 console.log('нет слолва');
                 word_not_exist(input);
             }else {
@@ -126,21 +133,35 @@ $(document).ready(function () {
     });
 });
 
-async function check_word(s) {
+// async function check_word(s) {
+//     const apiKey = 'dict.1.1.20230224T095439Z.9184bff1006b1511.31b84c39e763f3ba41bbf23fbe6fa0493221bc98';
+//     const response = await fetch(`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=${apiKey}&lang=ru-ru&text=${s}`);
+//     if (response.status === 401) {
+//         console.log("error");
+//         return;
+//     }
+//     const json = await response.json();
+//     if (json.def.length !== 0) {
+//         //console.log(json.def[0].text);
+//         return json.def[0].text;
+//     }
+//
+// }
+
+function check_word(s) {
     const apiKey = 'dict.1.1.20230224T095439Z.9184bff1006b1511.31b84c39e763f3ba41bbf23fbe6fa0493221bc98';
-    const response = await fetch(`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=${apiKey}&lang=ru-ru&text=${s}`);
-    if (response.status === 401) {
-        console.log("error");
-        return;
-    }
-    const json = await response.json();
-    if (json.def.length !== 0) {
-        //console.log(json.def[0].text);
-        return json.def[0].text;
-    }
+    return fetch(`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=${apiKey}&lang=ru-ru&text=${s}`).then(response => {
+        if (response.status === 401) {
+            console.log("error");
+            return;
+        }
+        return response.json();}).then(json => {
 
+            if (json.def.length !== 0) {
+                return json.def[0].text;
+
+            }});
 }
-
 function word_not_exist(input){ /*добавить к каждому полю*/
     input.style.transition = 'background-color 1s ease';
     input.style.backgroundColor = '#f25c5c';
@@ -155,7 +176,7 @@ function word_in_word(bigWord,smallWord){
         charCount.set(char, (charCount.get(char) || 0) + 1);
     }
 
-// Проверка, можно ли составить маленькое слово из букв большого слова
+
     let canMakeWord = true;
     for (const char of smallWord.toLowerCase()) {
         const count = charCount.get(char);

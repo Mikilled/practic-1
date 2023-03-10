@@ -17,8 +17,6 @@ function findDuplicates(str) {
     return duplicates;
 }
 
-
-
 $(document).ready(function () {
     $('.btn-task1').click( function() {
         const input = $("input").val();
